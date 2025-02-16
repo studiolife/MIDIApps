@@ -1,13 +1,8 @@
 /*
- Copyright (c) 2001-2006, Kurt Revis.  All rights reserved.
- 
- Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- 
- * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
- * Neither the name of Kurt Revis, nor Snoize, nor the names of other contributors may be used to endorse or promote products derived from this software without specific prior written permission.
- 
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ Copyright (c) 2001-2023, Kurt Revis.  All rights reserved.
+
+ This source code is licensed under the BSD-style license found in the
+ LICENSE file in the root directory of this source tree.
  */
 
 #include "SpyingMIDIDriver.h"
@@ -113,20 +108,22 @@ void SpyingMIDIDriver::BroadcasterListenerCountChanged(MessagePortBroadcaster *b
 
 void SpyingMIDIDriver::EnableMonitoring(Boolean enabled)
 {
-    OSStatus status;
+#if DEBUG
+    OSStatus status =
+#endif
+    MIDIDriverEnableMonitoring(Self(), enabled);
 
-    status = MIDIDriverEnableMonitoring(Self(), enabled);
-    #if DEBUG
-        if (status == noErr)
-            fprintf(stderr, "SpyingMIDIDriver: MIDIDriverEnableMonitoring(%d) succeeded!\n", enabled);
-        else
-            fprintf(stderr, "SpyingMIDIDriver: MIDIDriverEnableMonitoring(%d) failed: %ld\n", enabled, (long)status);
-    #endif
+#if DEBUG
+    if (status == noErr)
+        fprintf(stderr, "SpyingMIDIDriver: MIDIDriverEnableMonitoring(%d) succeeded!\n", enabled);
+    else
+        fprintf(stderr, "SpyingMIDIDriver: MIDIDriverEnableMonitoring(%d) failed: %ld\n", enabled, (long)status);
+#endif
 }
 
 CFMutableDataRef SpyingMIDIDriver::PackageMonitoredDataForBroadcast(MIDIEndpointRef destination, const MIDIPacketList *packetList)
 {
-    UInt32 packetListSize, totalSize;
+    intptr_t packetListSize, totalSize;
     CFMutableDataRef data;
     UInt8 *dataBuffer;
 
@@ -149,23 +146,18 @@ CFMutableDataRef SpyingMIDIDriver::PackageMonitoredDataForBroadcast(MIDIEndpoint
     return data;
 }
 
-UInt32 SpyingMIDIDriver::SizeOfPacketList(const MIDIPacketList *packetList)
+intptr_t SpyingMIDIDriver::SizeOfPacketList(const MIDIPacketList *packetList)
 {
-    UInt32 packetCount;
-    UInt32 packetListSize;
-    const MIDIPacket *packet;
+    // Iterate just past the last packet in the list, then subtract to return the total size.
+    // (Arguably, we don't need to include the padding at the end of the last packet, but
+    // this way matches the behavior of MIDIPacketList.sizeInBytes() which does.)
 
-    packetListSize = offsetof(MIDIPacketList, packet);
-
-    packetCount = packetList->numPackets;
-    packet = &packetList->packet[0];
-    while (packetCount--) {
-        packetListSize += offsetof(MIDIPacket, data);
-        packetListSize += packet->length;
+    const MIDIPacket *packet = &packetList->packet[0];
+    for (UInt32 i = 0; i < packetList->numPackets; i++) {
         packet = MIDIPacketNext(packet);
     }
-
-    return packetListSize;
+    intptr_t size = (intptr_t)(packet) - (intptr_t)packetList;
+    return size;
 }
 
 void messageQueueHandler(CFTypeRef objectFromQueue, void *refCon)

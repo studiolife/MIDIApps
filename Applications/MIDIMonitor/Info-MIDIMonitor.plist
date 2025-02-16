@@ -8,7 +8,9 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeIconFile</key>
-			<string>Document.icns</string>
+			<string>LegacyDocument</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>MIDI Monitor Document</string>
 			<key>CFBundleTypeRole</key>
@@ -22,7 +24,7 @@
 			<key>LSTypeIsPackage</key>
 			<integer>0</integer>
 			<key>NSDocumentClass</key>
-			<string>SMMDocument</string>
+			<string>$(PRODUCT_MODULE_NAME).Document</string>
 			<key>NSExportableTypes</key>
 			<array>
 				<string>com.snoize.midimonitor</string>
@@ -32,9 +34,7 @@
 	<key>CFBundleExecutable</key>
 	<string>MIDI Monitor</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.4.1, Copyright 2001-2019 Kurt Revis</string>
-	<key>CFBundleIconFile</key>
-	<string>MIDIMonitor.icns</string>
+	<string>1.5.4, Copyright 2001-2023 Kurt Revis</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -49,10 +49,10 @@
 	<string>mMon</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>10.9.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2001-2019 Kurt Revis</string>
+	<string>Copyright © 2001-2023 Kurt Revis</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -61,6 +61,8 @@
 	<string>https://www.snoize.com/MIDIMonitor/MIDIMonitor.xml</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>SUPublicEDKey</key>
+	<string>Zk/6WD45ECvo30iL+yu+RDMtyUtdf0eT1YDu0psPZQQ=</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -71,15 +73,16 @@
 			<key>UTTypeDescription</key>
 			<string>MIDI Monitor Document</string>
 			<key>UTTypeIconFile</key>
-			<string>Document</string>
+			<string>LegacyDocument</string>
+			<key>UTTypeIcons</key>
+			<dict>
+				<key>UTTypeIconText</key>
+				<string>MIDI Monitor</string>
+			</dict>
 			<key>UTTypeIdentifier</key>
 			<string>com.snoize.midimonitor</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
-				<key>com.apple.ostype</key>
-				<array>
-					<string>mMon</string>
-				</array>
 				<key>public.filename-extension</key>
 				<array>
 					<string>mMon</string>

@@ -8,14 +8,15 @@ This is the source code for the two applications. You do *not* need any of this 
 
 The source code is Open Source under the BSD license. See LICENSE for the legal details.
 
-The project is currently intended to be used with an up-to-date Xcode version, like Xcode 11.1 (with the MacOS 10.15 SDK). However, it has been reported to work with earlier releases, as old as Xcode 9.2.  (If you need to run it on an earlier Xcode, try checking out older revisions.)
+The project is currently intended to be used with an up-to-date Xcode version, like Xcode 15.0 (with the MacOS 14.0 SDK).  If you need to run it on an earlier Xcode, try checking out older revisions.
 
 ## How to build ##
 
 1. `git submodule update --init --recursive` 
-2. Open MIDIApps.xcworkspace with Xcode.
-3. In the "Scheme" popup menu in the toolbar, select either MIDI Monitor or SysEx Librarian.
-4. Build and run!
+2. Open `MIDIApps.xcworkspace` with Xcode.
+3. Open `Configurations/Snoize-Signing.xcconfig` and change `DEVELOPMENT_TEAM` to the Team ID of your Apple Developer account. See the file for more details.
+4. In the "Scheme" popup menu in the toolbar, select either MIDI Monitor or SysEx Librarian.
+5. Build and run!
 
 
 ## What's inside ##
@@ -30,13 +31,14 @@ Your source tree should look like this:
 	* SnoizeMIDI
 	* SnoizeMIDISpy
 * Third Party
+    * HexFiend
 * Updates
 
 ### Applications/MIDIMonitor Applications/SysExLibrarian ###
 
 The source for the two apps. The project files are MIDIMonitor.xcodeproj and SysExLibrarian.xcodeproj; open them with Xcode.
 
-Both apps are Cocoa and are written in Objective-C.
+Both apps are Cocoa, and are written in Swift.
 
 The apps rely on the other frameworks, described below.
 
@@ -52,7 +54,6 @@ A framework containing code for dealing with CoreMIDI in a Cocoa app:
 
 This framework is used by both apps. You can use it in your own apps as well.
 
-The code is mainly Objective-C, with one ordinary C file.
 
 ### Frameworks/SnoizeMIDISpy ###
 
@@ -70,12 +71,17 @@ The driver is written in C++, and the framework is C and Objective-C. You should
 
 Contains .xcconfig files used to coordinate build settings across all the Xcode projects.
 
-### Third Party, Updates ###
+### Third Party ###
 
-Contains the git submodule for Sparkle (the ubiquitous app-auto-update framework) and the server-side files to make it work.
+Contains the git submodule for HexFiend, which we use to display hex dumps in various views.
 
-If you don't see the Sparkle submodule, do a `git submodule update --init --recursive`.
+If you don't see the HexFiend submodule, do `git submodule update --init --recursive`.
 
+### Updates ###
+
+Contains the server-side files used to make app updates work (via Sparkle). You don't need to touch these. 
+
+Note that the app targets use Sparkle as a package dependency via Swift Package Manager. Xcode should automatically get the package for you.
 
 ## Questions? ##
 
